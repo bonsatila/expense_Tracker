@@ -1,3 +1,4 @@
+import 'package:expense_tracker/widgets/chart.dart';
 import 'package:flutter/material.dart';
 import './widgets/transaction_list.dart';
 import './widgets/new_transaction.dart';
@@ -12,12 +13,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
+        errorColor: Colors.red,
         fontFamily: 'QuickSand',
         textTheme: ThemeData.light().textTheme.copyWith(headline5: TextStyle(
           fontFamily: 'OpenSans',
           fontSize: 18,
           fontWeight: FontWeight.bold
-        )),
+        ),
+        button: TextStyle(color: Colors.white)),
         appBarTheme: AppBarTheme(
           textTheme: ThemeData.light().textTheme.copyWith(headline6:TextStyle(fontFamily: 'OpenSans', fontSize: 20, fontWeight: FontWeight.w100)),)
       ),
@@ -39,11 +42,11 @@ class _MyHomePageState extends State<MyHomePage> {
     // Transaction(id: 't2', title: 'Weekly Groceries', amount: 160.40, date: DateTime.now())
   ];
 
-  void _addNewTransaction(String txTitle, double txAmount){
+  void _addNewTransaction(String txTitle, double txAmount, DateTime txDate){
     final newTxt = Transaction(
       title: txTitle, 
       amount: txAmount, 
-      date: DateTime.now(), 
+      date: txDate, 
       id: DateTime.now().toString());
       setState(() {
         _userTransactions.add(newTxt);
@@ -53,6 +56,17 @@ class _MyHomePageState extends State<MyHomePage> {
     showModalBottomSheet(context: ctx, builder: (bCtx) {
       return NewTransaction(_addNewTransaction);
     },);
+  }
+
+  void _deleteTransaction(String id){
+    setState(() {
+      _userTransactions.removeWhere((element) => element.id == id);
+    });
+  }
+  List<Transaction> get _recentTransactions{
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
   }
 
   @override
@@ -69,17 +83,8 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Container(
-                width: double.infinity,
-                child:Card(
-                    color: Colors.amber,
-                  child: Container(
-                    width: double.infinity,
-                    child:Text('CHART!'),),
-                  elevation: 5,
-                ),
-              ),
-              TransactionList(_userTransactions)
+              Chart(_recentTransactions),
+              TransactionList(_userTransactions, _deleteTransaction)
             ],
           ),
         ),
