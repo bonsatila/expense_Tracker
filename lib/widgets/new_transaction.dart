@@ -58,7 +58,12 @@ class _NewTransactionState extends State<NewTransaction> {
       child: Card(
         elevation: 5,
         child: Container(
-          padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
@@ -73,7 +78,7 @@ class _NewTransactionState extends State<NewTransaction> {
               TextField(
                 decoration: InputDecoration(labelText: 'Amount'),
                 controller: _amountController,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                keyboardType: TextInputType.number,
                 onSubmitted: (_) => _submitData(),
                 // onChanged: (val) => amountInput = val,
               ),
@@ -111,6 +116,6 @@ class _NewTransactionState extends State<NewTransaction> {
           ),
         ),
       ),
-    ); 
+    );
   }
 }
